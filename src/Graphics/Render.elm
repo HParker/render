@@ -24,9 +24,9 @@ module Graphics.Render exposing
     , move, rotate, scale
     )
 
-{-| This library provides a toolkit for rendering and manipulating 
+{-| This library provides a toolkit for rendering and manipulating
 graphics primitives such as lines, polygons, text, images, etc.
-It is intended primarily for projects that are too complex for 
+It is intended primarily for projects that are too complex for
 the manual manipulation of  an SVG or HTML5 canvas element, but too
 simple for a fully blown graphics engine such as WebGL (a motivating
 example would be a simple 2D game).
@@ -89,11 +89,9 @@ import Html exposing (Html)
 import Color exposing (Color, Gradient)
 import List
 import String
-import Bitwise
-import Char
 
 
-{-| Anything that can be rendered on the screen. A `Form` could be a 
+{-| Anything that can be rendered on the screen. A `Form` could be a
 red circle, a line of text, or an arbitrary HTML element.
 
     redCircle : Form
@@ -188,7 +186,7 @@ hemispherical endings.
 type LineCap = Round | Square | Flat
 
 
-{-| Describes the join style of a line. 
+{-| Describes the join style of a line.
 -}
 type LineJoin = Smooth | Sharp | Bevel
 
@@ -205,7 +203,7 @@ a point in the middle of the viewport.
 -}
 type alias Point = (Float, Float)
 
-    
+
 form : BasicForm msg -> Form msg
 form bForm =
     { x = 0
@@ -238,7 +236,7 @@ group forms = form <| FGroup forms
 
 
 
-              
+
 
 
 
@@ -248,7 +246,7 @@ group forms = form <| FGroup forms
 
 {-| The `*Fill` and `*FillWithBorder` functions
 allow you to add styling to your shapes and conver them
-into forms, but sometimes those functions don't offer 
+into forms, but sometimes those functions don't offer
 enough flexibility. What if you want a dashed border
 instead of a solid one? Or how about a beveled join on
 the border? For this you must turn to the shape function.
@@ -307,7 +305,7 @@ solidFillWithBorder fillColor borderWidth borderColor s =
     , border = solidStyle borderColor borderWidth
     }
 
-    
+
 {-| Tiles a shape with a repeated image. The arguments specify the image width,
 height and url respectively.
 -}
@@ -351,7 +349,7 @@ line line style = form <| FLine line style
 
 {-| `polyline points` is a polyline with vertices
 at `points`. (A polyline is a collection of connected
-line segments. It can be thought of as drawing a 
+line segments. It can be thought of as drawing a
 "connect-the-dots" line through a list of points.)
 -}
 polyline : List Point -> Line
@@ -374,23 +372,23 @@ solidStyle color width =
     , dashing = []
     , dashOffset = 0
     }
-              
-              
-{-| `solid width color line` is a solid line of width `width` 
+
+
+{-| `solid width color line` is a solid line of width `width`
 and color `color` whose path is described by `line`.
 -}
 solid : Float -> Color -> Line -> Form msg
 solid width color l =
     line l <| solidStyle color width
 
-    
+
 {-| The same as `solid`, except the line is dashed.
 -}
 dashed : Float -> Color -> Line -> Form msg
 dashed width color l =
     let ls = solidStyle color width in line l { ls | dashing = [8,4] }
 
-    
+
 {-| The same as `solid`, except the line is dotted.
 -}
 dotted : Float -> Color -> Line -> Form msg
@@ -411,7 +409,7 @@ dotted width color l =
 --------------------- TEXT ---------------------
 
 
-{-| Similar to `shape` and `line`, the `text` function 
+{-| Similar to `shape` and `line`, the `text` function
 will take a string and any `TextStyle` and convert them
 into a form. It is useful for when functions like `plain`
 and `bold` don't offer enough flexibility and you need
@@ -420,7 +418,7 @@ more control over the styling of your text.
 text : String -> TextStyle -> Form msg
 text text style = form <| FText text style
 
-       
+
 plainStyle : Int -> String -> Color -> TextStyle
 plainStyle size family color =
     { color = color
@@ -439,7 +437,7 @@ plain : Int -> String -> Color -> String -> Form msg
 plain size family color t =
     text t <| plainStyle size family color
 
-        
+
 {-| A line of bold text. The arguments specify the text's
 font size, family and color respectively.
 -}
@@ -447,7 +445,7 @@ bold : Int -> String -> Color -> String -> Form msg
 bold size family color t =
     let ts = plainStyle size family color in text t { ts | bold = True }
 
-             
+
 {-| A line of italic text. The arguments specify the text's
 font size, family and color respectively.
 -}
@@ -455,7 +453,7 @@ italic : Int -> String -> Color -> String -> Form msg
 italic size family color t =
     let ts = plainStyle size family color in text t { ts | italic = True }
 
-             
+
 {-| A line of underlined text. The arguments specify the text's
 font size, family and color respectively.
 -}
@@ -510,7 +508,7 @@ angle : Float -> Form msg -> Form msg
 angle theta form = { form | theta = theta }
 
 
-{-| Sets the scale of a `Form`. 
+{-| Sets the scale of a `Form`.
 -}
 size : Float -> Form msg -> Form msg
 size scale form = { form | scale = scale }
@@ -522,7 +520,7 @@ move : Float -> Float -> Form msg -> Form msg
 move x y form = { form | x = form.x + x, y = form.y + y }
 
 
-{-| Modifies the angle of a `Form`. 
+{-| Modifies the angle of a `Form`.
 -}
 rotate : Float -> Form msg -> Form msg
 rotate theta form = { form | theta = form.theta + theta }
@@ -544,11 +542,11 @@ opacity alpha form = { form | alpha = alpha }
 
 
 
-    
 
 
 
-    
+
+
 
 ----------------------- SVG RENDERING --------------------
 
@@ -574,7 +572,7 @@ renderSvg' w h form id =
 
         FLine line style ->
             case line of
-                    
+
                 Polyline ps ->
                     ( id
                     , [ Svg.polyline
@@ -588,7 +586,7 @@ renderSvg' w h form id =
                     , svgEvalFill style.fill id ++
                         [ Svg.polygon
                               ((Svg.points <| svgDecodePoints ps) :: attrs w h form id) [ ] ])
-                    
+
                 Ellipse rx ry ->
                     ( id + 1
                     , svgEvalFill style.fill id ++
@@ -604,7 +602,7 @@ renderSvg' w h form id =
         FImage url width height ->
             ( id
             , [ Svg.image
-                    (attrs w h form id ++ 
+                    (attrs w h form id ++
                          [ Svg.width <| toString width
                          , Svg.height <| toString height
                          , Svg.xlinkHref url
@@ -621,7 +619,7 @@ renderSvg' w h form id =
                                    in  go (i + i', rs ++ rs') xs
                 (id',forms') = go (id,[]) forms
             in  (id', [ Svg.g (attrs w h form id) <| forms' ])
-                 
+
 
 attrs : Float -> Float -> Form msg -> Int -> List (Attribute msg)
 attrs width height form id =
@@ -635,6 +633,8 @@ attrs width height form id =
             , Svg.strokeLinejoin <| svgDecodeJoin style.join
             , Svg.opacity <| toString form.alpha
             , Svg.transform <| svgTransform height width form
+            , Svg.strokeDashoffset <| toString style.dashOffset
+            , Svg.strokeDasharray <| svgDecodeDashing style.dashing
             ]
 
         FShape shape style ->
@@ -649,7 +649,7 @@ attrs width height form id =
             , Svg.transform <| svgTransform height width form
             ]
 
-        FText text style ->       
+        FText text style ->
             [ Svg.fill <| svgDecodeColor style.color
             , Svg.fontFamily style.fontFamily
             , Svg.fontSize <| toString style.fontSize
@@ -660,8 +660,8 @@ attrs width height form id =
             ]
 
         _ -> [ Svg.transform <| svgTransform height width form ]
-                
-                        
+
+
 svgDecodeCap : LineCap -> String
 svgDecodeCap cap =
     case cap of
@@ -669,7 +669,7 @@ svgDecodeCap cap =
         Square -> "square"
         Flat -> "butt"
 
-                    
+
 svgDecodeJoin : LineJoin -> String
 svgDecodeJoin join =
     case join of
@@ -677,12 +677,12 @@ svgDecodeJoin join =
         Sharp -> "milter"
         Bevel -> "bevel"
 
-                
+
 svgDecodePoints : List Point -> String
 svgDecodePoints ps =
     ps |> List.map (\ (x,y) -> [toString x, toString y]) |> List.concat |> String.join " "
 
-        
+
 svgTransform :
     Float ->
     Float ->
@@ -721,12 +721,12 @@ svgEvalFill fs id =
 
         _ -> [ ]
 
-            
+
 svgDecodeFill : FillStyle -> Int -> String
 svgDecodeFill fs id =
     case fs of
 
-        Solid c -> 
+        Solid c ->
             svgDecodeColor c
 
         _ ->
@@ -738,7 +738,7 @@ svgDecodeFillAlpha fs =
     case fs of
         Solid c -> svgDecodeAlpha c
         Texture _ _ _ a -> toString a
-        
+
 
 svgDecodeColor : Color -> String
 svgDecodeColor c =
@@ -753,3 +753,6 @@ svgDecodeAlpha : Color -> String
 svgDecodeAlpha c =
     let {alpha} = c |> Color.toRgb
     in  toString alpha
+
+svgDecodeDashing : List Int -> String
+svgDecodeDashing ds = ds |> List.map toString |> String.join ","
