@@ -1,5 +1,5 @@
 {
-    "version": "1.0.1",
+    "version": "1.0.2",
     "summary": "Lightweight graphics similar to Graphics.Collage (backed by SVG)",
     "repository": "https://github.com/Kwarrtz/render.git",
     "license": "BSD3",
